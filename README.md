@@ -38,13 +38,13 @@ WiFi
 7. Upload the code to the ESP32
 8. (Optional) The files to 3D print the case are located in the `case_spotify_display` folder
 
-🚀 Features 
+## 🚀 Features 
 The firmware allows you to:
 * Display the name of the song, artist, and album image currently playing
 * Play, pause, skip forward, or go back through the song using the touchscreen
 * You can set up to two Wi-Fi networks to connect the ESP32 to the internet
 
-❌ Known Issues
+## ❌ Known Issues
 * The artist and song names get cut off when they reach the edge of the display (see demo image)
 * Sometimes the image may not display (this happened to me only once)
 
