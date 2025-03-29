@@ -1,0 +1,66 @@
+{
+  "uuid": "e8c2280ae3d23c3e9f7e1ff335ea4897",
+  "path": "Offline/esp32_display",
+  "name": "esp32_display",
+  "content": "display ILI9341 collegato con un esp32",
+  "created_at": "2025-02-22 18:57:07",
+  "updated_at": "2025-03-12 13:41:58",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "04a8805a13e9a09a1b3ce83a6c2ea260",
+      "title": "Sheet_1",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "b7f1d0b1110c4cb98d247fbf20f546e4": 1,
+        "ddd76d60b1ce4072967aee1e0ebeb08b": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "ESP32 Dev Kit C V2",
+          1,
+          "ESP32-WROVER_ESP32-WROVER",
+          "1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "ILI9341",
+          1,
+          "ILI9341-2.8",
+          "U2",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ]
+      ],
+      "updateTime": 1741783318,
+      "createTime": 1740247029,
+      "histories": [],
+      "created_at": "2025-02-22 18:57:09",
+      "updated_at": "2025-03-12 13:41:58"
+    }
+  ],
+  "sort": [],
+  "title": "esp32_display",
+  "foldername": "esp32_display",
+  "schfilename": "esp32_display.json",
+  "schfilemtime": 1741783318977
+}
