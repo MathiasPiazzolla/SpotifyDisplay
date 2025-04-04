@@ -2,6 +2,7 @@
 
 ## 📖 Description
 This project uses an **ESP32** connected to an **ILI9341 display**, allowing real-time display of various information about the song currently playing on Spotify.
+⚠️ WARNING!!! You have to need a spotify premium account.
 
 ## 🛠️ Hardware Used
 - **ESP32**
@@ -17,7 +18,6 @@ Arduino_JSON
 HTTPClient
 JPEGDEC
 base64
-WiFi
 ```
 
 ## 🔧 Installation
@@ -34,7 +34,10 @@ WiFi
 * Touch the yellow square and note down the x and y values displayed on the screen
 4. Open the project in the `SpotifyDisplay` folder
 5. Change the TS_MINX value with the x value from the red square, TS_MINY with the y value from the red square, TS_MAXX with the x value from the yellow square, TS_MAXY with the y value from the yellow square
-6. Rename the `secrets.h.example` file to `secrets.h` and modify it with the correct values (for ACCESS_TOKEN and REFRESH_TOKEN, use the [get_spotify_token.py](./get_spotify_token.py) script)
+6. Rename the `secrets.h.example` file to `secrets.h` and modify it with the correct values: 
+* WIFI_SSID and WIFI_PASSWORD with correct wifi credentials (you don't have to set both wifi credentials)
+* For CLIENT_ID and CLIENT_SECRET values you have to create a new app [here](https://developer.spotify.com/dashboard) (you have to set `Redirect URIs = http://127.0.0.1:5000/redirect` and `APIs used = Web API`)
+* For ACCESS_TOKEN and REFRESH_TOKEN you can use [get_spotify_token.py](./get_spotify_token.py) file. 
 7. Upload the code to the ESP32
 8. (Optional) The files to 3D print the case are located in the `case_spotify_display` folder
 
