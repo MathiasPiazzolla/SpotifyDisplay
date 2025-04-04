@@ -258,7 +258,7 @@ JPEGDEC jpeg;
  * @param pDraw image data structure
  * @return 1 if everything is done
  */
-int JPEGDraw(JPEGDRAW* pDraw) {
+int IRAM_ATTR JPEGDraw(JPEGDRAW* pDraw) {
   tft.dmaWait();
   tft.setAddrWindow(pDraw->x, pDraw->y, pDraw->iWidth, pDraw->iHeight);
   tft.writePixels(pDraw->pPixels, pDraw->iWidth * pDraw->iHeight, true, false);

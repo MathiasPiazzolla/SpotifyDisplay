@@ -4,7 +4,6 @@ import base64
 
 app = Flask(__name__)
 
-
 @app.route('/')
 def index():
     return """
@@ -25,7 +24,7 @@ def index():
         
         fetch('http://127.0.0.1:5000/set-variable?client_id=' + cid + '&client_secret=' + csec)
         
-        document.location = 'https://accounts.spotify.com/authorize?response_type=code&client_id=' + cid + '&scope=user-read-private&redirect_uri=http://127.0.0.1:5000/redirect'
+        document.location = 'https://accounts.spotify.com/authorize?response_type=code&client_id=' + cid + '&scope=user-read-playback-state%20user-modify-playback-state&redirect_uri=http://127.0.0.1:5000/redirect'
         
     }
 
@@ -68,7 +67,7 @@ def redirect():
 
     data = response.json()
 
-    return f"access_token --> {data['access_token']}\nrefresh_token --> {data['refresh_token']}"
+    return f"<b>access_token</b> --> {data['access_token']}<br><br><b>refresh_token</b> --> {data['refresh_token']}"
 
 app.run()
 
