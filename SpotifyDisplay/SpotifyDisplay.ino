@@ -21,8 +21,14 @@
 #define TFT_DC 4
 #define TFT_RST 2
 #define T_CS  22
+#define TFT_NAVY tft.color565(0, 0, 128)
 
-#define ROTATION 0
+#define ROTATION 1
+
+//image pixel
+uint32_t totalR = 0, totalG = 0, totalB = 0;
+uint32_t pixelCount = 0;
+uint16_t avgColor = 0;
 
 /* Spotify access token */
 String access_token = ACCESS_TOKEN;
@@ -97,7 +103,7 @@ void setup() {
   Serial.print("Connected to WiFi network with IP Address: ");
   Serial.println(WiFi.localIP());
   tft.drawCenterText("Connected :)");
-
+  tft.fillScreen(ILI9341_BLACK);
   // task per la gestione del touch
   xTaskCreatePinnedToCore(
                     TouchTaskCode,   /* Task function. */
@@ -108,7 +114,6 @@ void setup() {
                     &TouchTask,      /* Task handle to keep track of created task */
                     0);          /* pin task to core 0 */    
 }
-
 /* Manage if I already print something */
 bool done = false;
 void loop() {
@@ -170,13 +175,38 @@ void loop() {
       title = out[0];
       artist = out[1];
       imageURL = out[2];
-      tft.fillScreen(ILI9341_BLACK);
-      tft.drawSkipArrows();
-      tft.drawArtist(artist.c_str());
-      tft.drawTitle(title.c_str());
-      tft.drawPlay();
-      tft.drawProgressBar(percentuale);
-      downloadAndDisplayImage();
+    
+      if (ROTATION == 1 or ROTATION == 3) {
+
+        tft.fillScreen(ILI9341_BLACK);
+        tft.drawArtistHorizontal(artist.c_str(),avgColor);
+        tft.drawTitleHorizontal(title.c_str(),avgColor);
+        tft.drawSkipArrows();
+        tft.drawPlay();
+        tft.drawProgressBar(percentuale);
+        //if titolo su piu righe artista scende
+        downloadAndDisplayImage(true);
+        fillMedia();
+        //fillMedia();
+        tft.drawSkipArrows();
+        tft.drawPlay();
+        tft.drawProgressBar(percentuale);
+        tft.drawArtistHorizontal(artist.c_str(),avgColor);
+        tft.drawTitleHorizontal(title.c_str(),avgColor);
+        downloadAndDisplayImage(false);
+        
+      }else if((ROTATION == 2 or ROTATION == 0)){
+        downloadAndDisplayImage(true);
+        fillMedia();
+        //tft.fillScreen(ILI9341_BLACK);
+        tft.drawArtist(artist.c_str());
+        tft.drawTitle(title.c_str());
+        downloadAndDisplayImage(true);
+        tft.drawSkipArrows();
+        tft.drawPlay();
+        tft.drawProgressBar(percentuale);
+        downloadAndDisplayImage(false);
+      }
     }
 
   }
@@ -258,32 +288,91 @@ JPEGDEC jpeg;
  * @param pDraw image data structure
  * @return 1 if everything is done
  */
+
+ /*
 int JPEGDraw(JPEGDRAW* pDraw) {
   tft.dmaWait();
   tft.setAddrWindow(pDraw->x, pDraw->y, pDraw->iWidth, pDraw->iHeight);
   tft.writePixels(pDraw->pPixels, pDraw->iWidth * pDraw->iHeight, true, false);
   return 1;
 }
-
+*/
 /**
  * Function that make a request to download an image and print that image on tft screen.
  */
-void downloadAndDisplayImage() {
-  Serial.println("Display image");
 
-  HTTPClient http;
-  http.begin(imageURL);
-  http.setTimeout(TIMEOUT_IMAGE);
 
-  int httpCode = http.GET();
-  Serial.print("Resp code image: ");
-  Serial.println(httpCode);
-  if (httpCode == HTTP_CODE_OK) {
 
-    String s = http.getString();
+ int JPEGDraw(JPEGDRAW* pDraw) {
+  tft.dmaWait();
+  //fillMedia();
+  tft.setAddrWindow(pDraw->x, pDraw->y, pDraw->iWidth, pDraw->iHeight);
+  tft.writePixels(pDraw->pPixels, pDraw->iWidth * pDraw->iHeight, true, false);
+  //fillMedia();
 
-    const char* data = s.c_str();
+  // Calcolo media colori
+  for (int i = 0; i < pDraw->iWidth * pDraw->iHeight; i++) {
+    uint16_t color = pDraw->pPixels[i];
+    uint8_t r = (color >> 11) & 0x1F;
+    uint8_t g = (color >> 5) & 0x3F;
+    uint8_t b = color & 0x1F;
 
+    // Estendi a 8 bit per canale
+    r = (r << 3) | (r >> 2);
+    g = (g << 2) | (g >> 4);
+    b = (b << 3) | (b >> 2);
+
+    totalR += r;
+    totalG += g;
+    totalB += b;
+    pixelCount++;
+  }
+  //fillMedia();
+  return 1;
+}
+
+
+void downloadAndDisplayImage(bool first) {
+  totalR = 0;
+  totalG = 0;
+  totalB = 0;
+  pixelCount = 0;
+  String s = "";
+  if (first = true) { 
+    Serial.println("Display image");
+
+    HTTPClient http;
+    http.begin(imageURL);
+    http.setTimeout(TIMEOUT_IMAGE);
+
+    int httpCode = http.GET();
+    Serial.print("Resp code image: ");
+    Serial.println(httpCode);
+    if (httpCode == HTTP_CODE_OK) {
+      s = http.getString();
+    } else {
+      imageURL = ""; //imageURL reset to refresh it
+      Serial.printf("Errore HTTP: %d\n", httpCode);
+    }
+    http.end();
+  }
+  const char* data = s.c_str();
+  if (ROTATION ==1 or ROTATION==3) {
+    Serial.println("ok il display e in orizontale");
+    tft.startWrite();
+    if (jpeg.openFLASH((uint8_t*)data, s.length(), JPEGDraw)) {
+      fillMedia();
+      if (!jpeg.decode((tft.width() / 100) * 2, tft.height() / 100 * 2, JPEG_SCALE_HALF)) {
+        Serial.println("Error decode image");
+      }
+      jpeg.close();
+    } else {
+      Serial.print("length: ");
+      Serial.println(s.length());
+      Serial.println("Error decode image");
+    }
+    tft.endWrite();
+  }else if (ROTATION == 2 or ROTATION== 0){
     tft.startWrite();
     if (jpeg.openFLASH((uint8_t*)data, s.length(), JPEGDraw)) {
       if (!jpeg.decode((tft.width() - 150) / 2, 20, JPEG_SCALE_HALF)) {
@@ -296,10 +385,25 @@ void downloadAndDisplayImage() {
       Serial.println("Error decode image");
     }
     tft.endWrite();
-  } else {
-    imageURL = ""; //imageURL reset to refresh it
-    Serial.printf("Errore HTTP: %d\n", httpCode);
   }
-  http.end();
   Serial.println("End display image");
 }
+
+
+void fillMedia() {
+  if (pixelCount > 0) {
+    uint8_t avgR = totalR / pixelCount;
+    uint8_t avgG = totalG / pixelCount;
+    uint8_t avgB = totalB / pixelCount;
+
+    avgColor = ((avgR & 0xF8) << 8) | ((avgG & 0xFC) << 3) | (avgB >> 3);
+    Serial.println("sto cercando di riemipire il display");
+    tft.fillScreen(avgColor); // Imposta sfondo come media dell'immagine
+  }
+}
+
+
+//riemipire la progress bar con il colore dello sfondo
+//aggiungere il like e il random
+
+

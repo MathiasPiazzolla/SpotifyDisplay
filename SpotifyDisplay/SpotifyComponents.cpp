@@ -1,5 +1,6 @@
 #include "SpotifyComponents.h"
 
+uint16_t currentAverageColor;
 
 
 SpotifyComponents::SpotifyComponents(int8_t TFT_CS, int8_t TFT_DC, int8_t TFT_RST)
@@ -57,6 +58,16 @@ void SpotifyComponents::drawTitle(const char* t) {
   print(sanitizeString(t));
   fillRect(width() - 10, height() - 128, 10, 23, ILI9341_BLACK);
 }
+void SpotifyComponents::drawTitleHorizontal(const char* t,uint16_t currentAverageColor) {
+  setTextColor(ILI9341_WHITE);
+  setTextSize(1);
+  setFont(&GothamBold12pt7b);
+  setCursor(width() / 2 + 10, (height() / 100 * 20));
+  setTextWrap(false);
+  print(sanitizeString(t));
+  fillRect((width()/2) - 10, height() - 128, 10, 23, currentAverageColor);
+}
+
 
 void SpotifyComponents::drawArtist(const char* a) {
   setTextColor(color565(70, 70, 70));
@@ -65,8 +76,25 @@ void SpotifyComponents::drawArtist(const char* a) {
   setCursor(10, height() - 90);
   setTextWrap(false);
   print(sanitizeString(a));
-  fillRect(width() - 10, height() - 102, 10, 14, ILI9341_BLACK);
+  fillRect(width() - 10, height() - 102, 10, 14, ILI9341_WHITE);
 }
+void SpotifyComponents::drawArtistHorizontal(const char* a,uint16_t currentAverageColor) {
+  setTextColor(color565(255, 255, 255));
+  setTextSize(1);
+  setFont(&FreeSans9pt7b);
+  /*
+  if (rig == false ) {
+    setCursor(width() / 2, 127);
+  }else {
+    setCursor(width() / 2, 150);
+  }
+    */
+  setCursor(width() / 2 + 10, 127);
+  setTextWrap(false);
+  print(sanitizeString(a));
+  fillRect((width()/2) - 10, height() - 102, 10, 14, currentAverageColor);
+}
+
 
 void SpotifyComponents::drawCenterText(const char* s) {
   int16_t x1, y1;

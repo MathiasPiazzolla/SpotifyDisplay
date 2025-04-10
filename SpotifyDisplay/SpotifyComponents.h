@@ -43,6 +43,7 @@ class SpotifyComponents: public Adafruit_ILI9341 {
      * @param t Characters to print on the screen as title
      */
     void drawTitle(const char* t);
+    void drawTitleHorizontal(const char* t,uint16_t currentAverageColor);
 
     /**
      * Print the artist name on the screen
@@ -50,6 +51,7 @@ class SpotifyComponents: public Adafruit_ILI9341 {
      * @param t Characters to print on the screen as artist name
      */
     void drawArtist(const char* a);
+    void drawArtistHorizontal(const char* a,uint16_t currentAverageColor);
 
     /**
      * Print a text on the center on the screen
